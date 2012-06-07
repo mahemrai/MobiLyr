@@ -1,5 +1,5 @@
 /*
- * findTitleScreen class allows the user to search for an album of a 
+ * FindAlbumScreen class allows the user to search for an album of a 
  * particular artist. The user has to enter name of the album and the 
  * artist to make a query. The query is made to discogs database using 
  * the discogs API.
@@ -24,13 +24,13 @@ import net.rim.device.api.ui.container.MainScreen;
 import net.rim.device.api.ui.container.VerticalFieldManager;
 import net.rim.device.api.ui.decor.BorderFactory;
 
-public class findAlbumScreen extends MainScreen implements FieldChangeListener{
+public class FindAlbumScreen extends MainScreen implements FieldChangeListener{
 	private LabelField title, artist;
 	private TextField _title, _artist;
 	private ButtonField search;
 	private VerticalFieldManager searchFields;
 	
-	public findAlbumScreen(){
+	public FindAlbumScreen(){
 		//Set the displayed title of the screen
 		setTitle("MobiLyr: Search Title");
 		
@@ -86,7 +86,7 @@ public class findAlbumScreen extends MainScreen implements FieldChangeListener{
 				Result result = new Result(_title.getText(), _artist.getText());
 				//Push screen to the stack
 				UiApplication.getUiApplication().pushScreen(
-					new searchResultScreen(result.getSearchResult())
+					new SearchResultScreen(result.getSearchResult())
 				);
 			}
 		}

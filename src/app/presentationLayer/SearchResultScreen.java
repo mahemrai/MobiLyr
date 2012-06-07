@@ -1,5 +1,5 @@
 /*
- * searchResultScreen class
+ * SearchResultScreen class
  * 
  * TODO: Commenting and lots of work
  * 
@@ -15,11 +15,11 @@ import net.rim.device.api.ui.component.TextField;
 import net.rim.device.api.ui.container.MainScreen;
 import net.rim.device.api.ui.decor.BorderFactory;
 
-public class searchResultScreen extends MainScreen{
+public class SearchResultScreen extends MainScreen{
 	private LabelField responseText;
 	private TextField _responseText;
 	
-	public searchResultScreen(String data){
+	public SearchResultScreen(String data){
 		setTitle("MobiLyr: Search Result");
 		
 		responseText = new LabelField("JSON data:");
