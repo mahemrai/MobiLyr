@@ -12,7 +12,7 @@
 
 package app;
 
-import app.presentationLayer.findTitleScreen;
+import app.presentationLayer.findAlbumScreen;
 import net.rim.device.api.ui.UiApplication;
 
 /**
@@ -34,6 +34,6 @@ public class MobiLyrApp extends UiApplication{
 	//constructor
 	public MobiLyrApp(){
 		//Push a screen onto the UI stack for rendering.
-		pushScreen(new findTitleScreen());
+		pushScreen(new findAlbumScreen());
 	}
 }

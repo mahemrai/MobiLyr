@@ -24,13 +24,13 @@ import net.rim.device.api.ui.container.MainScreen;
 import net.rim.device.api.ui.container.VerticalFieldManager;
 import net.rim.device.api.ui.decor.BorderFactory;
 
-public class findTitleScreen extends MainScreen implements FieldChangeListener{
+public class findAlbumScreen extends MainScreen implements FieldChangeListener{
 	private LabelField title, artist;
 	private TextField _title, _artist;
 	private ButtonField search;
 	private VerticalFieldManager searchFields;
 	
-	public findTitleScreen(){
+	public findAlbumScreen(){
 		//Set the displayed title of the screen
 		setTitle("MobiLyr: Search Title");
 		
