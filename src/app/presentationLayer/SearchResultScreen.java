@@ -3,7 +3,7 @@
  * 
  * TODO: Commenting and lots of work
  * 
- * Mahendra M. Rai
+ * Author: Mahendra M. Rai
  * Last modified: 07/06/2012
  */
 

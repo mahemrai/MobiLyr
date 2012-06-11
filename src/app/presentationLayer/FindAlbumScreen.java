@@ -10,7 +10,8 @@
 
 package app.presentationLayer;
 
-import app.applicationLayer.logic.Result;
+import app.applicationLayer.customUIComponents.StatusDialog;
+import app.applicationLayer.logic.SearchResult;
 import net.rim.device.api.system.Bitmap;
 import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.FieldChangeListener;
@@ -29,6 +30,7 @@ public class FindAlbumScreen extends MainScreen implements FieldChangeListener{
 	private TextField _title, _artist;
 	private ButtonField search;
 	private VerticalFieldManager searchFields;
+	String data;
 	
 	public FindAlbumScreen(){
 		//Set the displayed title of the screen
@@ -75,20 +77,42 @@ public class FindAlbumScreen extends MainScreen implements FieldChangeListener{
 	 * @param field Specifies active field
 	 * @param context
 	 */
-	public void fieldChanged(Field field, int context){
-		//In the case of button being clicked check whether all required
-		//information are provided.
-		if(field == search){
-			if(_title.getText().equals("") || _artist.getText().equals("")){
-				Dialog.alert("Enter all required fields.");
-			}else{
-				//Use Result logic to retrieve data from discogs server
-				Result result = new Result(_title.getText(), _artist.getText());
-				//Push screen to the stack
-				UiApplication.getUiApplication().pushScreen(
-					new SearchResultScreen(result.getSearchResult())
-				);
+	public void fieldChanged(final Field field, int context){
+		//Start the process as a separate thread
+		new Thread(){	
+			public void run(){
+				//In the case of button being clicked check whether all required
+				//information are provided.
+				if(field == search){			
+					if(_title.getText().equals("") || _artist.getText().equals("")){
+						Dialog.alert("Enter all required fields.");
+					}else{
+						//Custom dialog to display status message
+						final StatusDialog status = new StatusDialog("Searching...");
+						//Display status message to the user
+						UiApplication.getUiApplication().invokeLater(new Runnable(){
+							public void run(){
+								UiApplication.getUiApplication().pushScreen(status);
+							}
+						});
+						
+						//Instantiate a logic object and retrieve data from discogs server
+						SearchResult result = new SearchResult(_title.getText(), _artist.getText());
+						data = result.getSearchResult();
+						
+						//Close dialog
+						UiApplication.getUiApplication().invokeLater(new Runnable(){
+				    		public void run(){
+				    			UiApplication.getUiApplication().popScreen(status);
+				    			//Push screen to the stack
+								UiApplication.getUiApplication().pushScreen(
+									new SearchResultScreen(data)
+								);
+				    		}
+				    	});
+					}
+				}
 			}
-		}
+		}.start();
 	}
 }

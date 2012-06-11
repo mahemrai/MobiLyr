@@ -2,7 +2,7 @@
  * LogicObject class acts as a generalisation of all the other 
  * logic classes and contains some universal methods.
  * 
- * Mahendra M. Rai
+ * Author: Mahendra M. Rai
  * Last modified: 07/06/2012
  */
 
