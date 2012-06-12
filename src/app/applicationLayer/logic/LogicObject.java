@@ -10,6 +10,7 @@ package app.applicationLayer.logic;
 
 public abstract class LogicObject{
 	protected String jsonData;
+	protected byte[] response;
 	
 	//TODO: Implement auto-detection of the device connection
 	protected String connectionType(){
@@ -22,5 +23,9 @@ public abstract class LogicObject{
 	 */
 	public void setJSONData(String jsonData){ 
 		this.jsonData = jsonData; 
+	}
+	
+	public void setResponse(byte[] response){
+		this.response = response;
 	}
 }

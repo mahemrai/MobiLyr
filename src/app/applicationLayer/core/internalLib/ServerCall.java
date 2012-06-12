@@ -4,16 +4,19 @@
  * TODO: Commenting and lots of work
  * 
  * Mahendra M. Rai
- * Last modified: 07/06/2012
+ * Last modified: 12/06/2012
  */
 
 package app.applicationLayer.core.internalLib;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
+
+import net.rim.device.api.io.IOUtilities;
 
 import app.applicationLayer.logic.LogicObject;
 
@@ -22,7 +25,7 @@ public class ServerCall extends Thread{
 	private String url;
 	private LogicObject obj;
 	private byte[] postData;
-	private byte[] jsonData;
+	private byte[] response;
 	
 	//constructor for GET request
 	public ServerCall(String requestMethod, String url, LogicObject obj){
@@ -32,7 +35,8 @@ public class ServerCall extends Thread{
 	}
 	
 	//constructor for POST request
-	public ServerCall(String requestMethod, String url, byte[] postData, LogicObject obj){
+	public ServerCall(String requestMethod, String url, 
+			byte[] postData, LogicObject obj){
 		this.requestMethod = requestMethod;
 		this.url = url;
 		this.postData = postData;
@@ -63,16 +67,8 @@ public class ServerCall extends Thread{
 			}
 			
 			data = connection.openInputStream();
-			
-			jsonData = new byte[10000];
-			
-			int length = 0;
-			StringBuffer response = new StringBuffer();
-			while(-1 != (length = data.read(jsonData))){
-				response.append(new String(jsonData, 0, length));
-			}
-			
-			this.obj.setJSONData(response.toString());
+			response = IOUtilities.streamToBytes(data);
+			this.obj.setResponse(response);
 		} catch(Exception e){
 			//TODO: Implement proper exception handler
 			System.out.println(e.getMessage());

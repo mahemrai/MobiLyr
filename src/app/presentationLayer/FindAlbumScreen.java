@@ -5,7 +5,7 @@
  * the discogs API.
  * 
  * Author: Mahendra M. Rai
- * Last modified: 05/06/2012
+ * Last modified: 11/06/2012
  */
 
 package app.presentationLayer;
@@ -97,8 +97,8 @@ public class FindAlbumScreen extends MainScreen implements FieldChangeListener{
 						});
 						
 						//Instantiate a logic object and retrieve data from discogs server
-						SearchResult result = new SearchResult(_title.getText(), _artist.getText());
-						data = result.getSearchResult();
+						final SearchResult result = new SearchResult(_title.getText(), _artist.getText());
+						//data = result.getSearchResult();
 						
 						//Close dialog
 						UiApplication.getUiApplication().invokeLater(new Runnable(){
@@ -106,7 +106,7 @@ public class FindAlbumScreen extends MainScreen implements FieldChangeListener{
 				    			UiApplication.getUiApplication().popScreen(status);
 				    			//Push screen to the stack
 								UiApplication.getUiApplication().pushScreen(
-									new SearchResultScreen(data)
+									new SearchResultScreen(result.getSearchResult())
 								);
 				    		}
 				    	});

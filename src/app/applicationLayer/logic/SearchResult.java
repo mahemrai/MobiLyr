@@ -3,7 +3,7 @@
  * and selection of a particular album.
  * 
  * Author: Mahendra M. Rai
- * Last modified: 07/06/2012
+ * Last modified: 12/06/2012
  */
 
 package app.applicationLayer.logic;
@@ -11,12 +11,16 @@ package app.applicationLayer.logic;
 import java.lang.Character;
 import java.util.Vector;
 
+import net.rim.device.api.system.Bitmap;
+
 import app.applicationLayer.core.externalLib.jsonParser.JSONException;
 import app.applicationLayer.core.internalLib.DataParser;
 import app.applicationLayer.core.internalLib.ServerCall;
 
 public class SearchResult extends LogicObject{
 	private String nextURL;
+	private String prevURL;
+	private Result result;
 	private Result[] setOfResults;
 	
 	//Query-related parameters
@@ -32,13 +36,19 @@ public class SearchResult extends LogicObject{
 	
 	//Setters
 	public void setNextURL(String nextUrl){ this.nextURL = nextUrl; }
+	public void setPrevURL(String prevUrl){ this.prevURL = prevUrl; }
 	public void setResults(Result[] setOfResults){ this.setOfResults = setOfResults; }
 	
 	//Getters
 	public String getNextURL(){ return this.nextURL; }
+	public String getPrevURL(){ return this.prevURL; }
 	public Result[] getResults(){ return this.setOfResults; }
 	
-	public String getSearchResult(){
+	/**
+	 * Processes search query and returns the result
+	 * @return SearchResult object
+	 */
+	public SearchResult getSearchResult(){
 		//URL to perform search query in Discogs' database for
 		//user's preferred album
 		String url = "http://api.discogs.com/database/" +
@@ -58,12 +68,18 @@ public class SearchResult extends LogicObject{
 			e.printStackTrace();
 		}
 		
-		DataParser parser = new DataParser(this.jsonData);
-		SearchResult obj = parser.getSearchResult();
+		String data = new String(this.response);
 		
-		return obj.getNextURL();
-		//return parser.getResult();
-		//return this.jsonData;
+		//Initialise DataParser object by providing JSON data
+		DataParser parser = new DataParser(data);
+		//Get the parsed data as an object and return it
+		SearchResult obj = parser.getSearchResult();
+		/*setOfResults = obj.getResults();
+		for(int i=0; i<setOfResults.length; i++){
+			result = setOfResults[i];
+			result.setImage(result.getCoverart());
+		}*/
+		return obj;
 	}
 	
 	/**
@@ -85,46 +101,5 @@ public class SearchResult extends LogicObject{
 			}
 		}
         return buffer.toString();
-	}
-	
-	/*
-	 * Result class
-	 */
-	public class Result{
-		//Response-related parameters
-		private String title;
-		private String format;
-		private String coverart;
-		private String uri;
-		private long discogsID;
-		
-		public Result(String title, String format, String coverart, String uri){
-			this.title = title;
-			this.format = format;
-			this.coverart = coverart;
-			this.uri = uri;
-			this.discogsID = extractDiscogsIDFromUri(uri);
-		}
-		
-		/**
-		 * Extracts the ID of the album used in the Discogs' database.
-		 * @param uri URI of the album in Discogs' website.
-		 * @return ID as long object.
-		 */
-		private long extractDiscogsIDFromUri(String uri){
-			StringBuffer buffer = new StringBuffer();
-			//Loop through the provided String
-			for(int i=0; i<uri.length(); i++){
-				char a = uri.charAt(i);
-				//Check if the character is a digit and append it into
-				//the buffer
-				if(Character.isDigit(a)){
-					buffer.append(a);
-				}
-			}
-			
-			//return the extracted data as long object
-			return Long.parseLong(buffer.toString());
-		}
 	}
 }
