@@ -28,26 +28,37 @@ public class DataParser{
 	 * Extracts SearchResult object from the provided JSON data
 	 * @return SearchResult object
 	 */
+	/**
+	 * Extracts SearchResult object from the provided JSON data
+	 * @return SearchResult object
+	 */
 	public SearchResult getSearchResult(){
 		SearchResult searchResult = new SearchResult();
-		Result[] results = new Result[10];
+		Result[] results;
 		try{
 			JSONObject json = new JSONObject(this.dataSource);
 			JSONObject pagination = json.getJSONObject("pagination");
 			JSONObject urls = pagination.getJSONObject("urls");
-			searchResult.setNextURL(urls.getString("next"));
 			
-			JSONArray result = json.getJSONArray("results");
+			if(urls.isNull("next")){ searchResult.setNextURL(null); }
+			else searchResult.setNextURL(urls.getString("next"));
 			
-			for(int i=0; i<result.length(); i++){
-				JSONObject me = result.getJSONObject(i);
+			if(urls.isNull("prev")){ searchResult.setPrevURL(null); }
+			else searchResult.setPrevURL(urls.getString("prev"));
+
+			JSONArray array = json.getJSONArray("results");
+			results = new Result[array.length()];
+
+			for(int i=0; i<array.length(); i++){
+				JSONObject me = array.getJSONObject(i);
 				String coverart = me.getString("thumb");
-				String format = me.getString("format");
 				String title = me.getString("title");
+				String format = me.getString("format");
+				String label = me.getString("label");				
 				long id = me.getLong("id");
-				results[i] = new Result(title, format, coverart, id);
+				results[i] = new Result(title, format, label, coverart, id);
 			}
-			
+
 			searchResult.setResults(results);
 		} catch(JSONException e){
 			e.printStackTrace();

@@ -97,7 +97,7 @@ public class FindAlbumScreen extends MainScreen implements FieldChangeListener{
 						});
 						
 						//Instantiate a logic object and retrieve data from discogs server
-						final SearchResult result = new SearchResult(_title.getText(), _artist.getText());
+						final SearchResult searchResult = new SearchResult(_title.getText(), _artist.getText());
 						//data = result.getSearchResult();
 						
 						//Close dialog
@@ -106,7 +106,7 @@ public class FindAlbumScreen extends MainScreen implements FieldChangeListener{
 				    			UiApplication.getUiApplication().popScreen(status);
 				    			//Push screen to the stack
 								UiApplication.getUiApplication().pushScreen(
-									new SearchResultScreen(result.getSearchResult())
+									new SearchResultScreen(searchResult.getSearchResult())
 								);
 				    		}
 				    	});

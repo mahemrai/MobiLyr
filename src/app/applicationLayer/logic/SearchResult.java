@@ -8,19 +8,12 @@
 
 package app.applicationLayer.logic;
 
-import java.lang.Character;
-import java.util.Vector;
-
-import net.rim.device.api.system.Bitmap;
-
-import app.applicationLayer.core.externalLib.jsonParser.JSONException;
 import app.applicationLayer.core.internalLib.DataParser;
 import app.applicationLayer.core.internalLib.ServerCall;
 
 public class SearchResult extends LogicObject{
 	private String nextURL;
 	private String prevURL;
-	private Result result;
 	private Result[] setOfResults;
 	
 	//Query-related parameters
@@ -52,8 +45,8 @@ public class SearchResult extends LogicObject{
 		//URL to perform search query in Discogs' database for
 		//user's preferred album
 		String url = "http://api.discogs.com/database/" +
-					"search?q="+ replaceWhiteSpaces(this.artistForQuery) + "+" + 
-					replaceWhiteSpaces(this.titleForQuery) + "&type=release" +
+					"search?q="+ replaceWhiteSpaces(artistForQuery) + "+" + 
+					replaceWhiteSpaces(titleForQuery) + "&type=release" +
 					"&page=1&per_page=10;deviceside=true";
 		
 		//Initialise ServerCall object with GET method
@@ -68,17 +61,39 @@ public class SearchResult extends LogicObject{
 			e.printStackTrace();
 		}
 		
-		String data = new String(this.response);
+		String data = new String(response);
 		
 		//Initialise DataParser object by providing JSON data
 		DataParser parser = new DataParser(data);
 		//Get the parsed data as an object and return it
 		SearchResult obj = parser.getSearchResult();
-		/*setOfResults = obj.getResults();
-		for(int i=0; i<setOfResults.length; i++){
-			result = setOfResults[i];
-			result.setImage(result.getCoverart());
-		}*/
+		return obj;
+	}
+	
+	/**
+	 * Gets a set of result as a page
+	 * @param url
+	 * @return
+	 */
+	public SearchResult getPageResult(String url){
+		//Initialise ServerCall object with GET method
+		ServerCall requestCall = new ServerCall("GET", url+";deviceSide=true", this);
+		//Start the thread
+		requestCall.start();
+		try{
+			//Wait for its process to end
+			requestCall.join();
+		}catch(InterruptedException e){
+			//TODO: Implement proper exception handler
+			e.printStackTrace();
+		}
+		
+		String data = new String(response);
+		
+		//Initialise DataParser object by providing JSON data
+		DataParser parser = new DataParser(data);
+		//Get the parsed data as an object and return it
+		SearchResult obj = parser.getSearchResult();
 		return obj;
 	}
 	

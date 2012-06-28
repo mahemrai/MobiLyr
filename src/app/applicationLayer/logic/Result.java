@@ -15,6 +15,7 @@ public class Result extends LogicObject{
 	//Response-related parameters
 	private String title;
 	private String format;
+	private String label;
 	private String coverart;
 	private long discogsID;
 	
@@ -28,9 +29,19 @@ public class Result extends LogicObject{
 		this.discogsID = id;
 	}
 	
+	//Constructor
+	public Result(String title, String format, String label, String coverart, long id){
+		this.title = title;
+		this.format = format;
+		this.label = label;
+		this.coverart = coverart;
+		this.discogsID = id;
+	}
+	
 	//Getters
 	public String getTitle(){ return this.title; }
 	public String getFormat(){ return this.format; }
+	public String getLabel(){ return this.label; }
 	public String getCoverart(){ return this.coverart; }
 	public long getDiscogsID(){ return this.discogsID; }
 	public Bitmap getImage(){ return this.image; }

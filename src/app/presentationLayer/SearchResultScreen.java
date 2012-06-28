@@ -9,6 +9,7 @@
 
 package app.presentationLayer;
 
+import app.applicationLayer.customUIComponents.StatusDialog;
 import app.applicationLayer.logic.Result;
 import app.applicationLayer.logic.SearchResult;
 import net.rim.device.api.system.Bitmap;
@@ -16,40 +17,42 @@ import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.FieldChangeListener;
 import net.rim.device.api.ui.Font;
 import net.rim.device.api.ui.Graphics;
-import net.rim.device.api.ui.XYRect;
-import net.rim.device.api.ui.component.LabelField;
+import net.rim.device.api.ui.UiApplication;
+import net.rim.device.api.ui.component.ButtonField;
 import net.rim.device.api.ui.component.ListField;
 import net.rim.device.api.ui.component.ObjectListField;
+import net.rim.device.api.ui.container.HorizontalFieldManager;
 import net.rim.device.api.ui.container.MainScreen;
 
 public class SearchResultScreen extends MainScreen implements FieldChangeListener{
-	private LabelField responseText;
-	private SearchResult searchResult;
+	private HorizontalFieldManager btnManager;
+	private ButtonField nextBtn, prevBtn;
+	
+	private SearchResult data;
 	private Result[] results;
 	private Result result;
-	
+	private int newY;
+
 	public SearchResultScreen(SearchResult data){
 		setTitle("MobiLyr: Search Result");
-		
-		responseText = new LabelField("Results:");
-		add(responseText);
-		
-		searchResult = data;
-		results = searchResult.getResults();
-		int size = results.length;
-		
-		for(int i=0; i<size; i++){
-			result = results[i];
-			if(!result.getCoverart().equalsIgnoreCase("null")){
-				result.setImage(result.getCoverart());
-			}
-			resultList.insert(i, Long.toString(result.getDiscogsID()));
-		}
-		
+
+		this.data = data;
+		populateList(this.data);
+
 		add(resultList);
 		resultList.setRowHeight(100);
+		
+		btnManager = new HorizontalFieldManager(Field.USE_ALL_WIDTH);
+		nextBtn = new ButtonField("Next", Field.FIELD_RIGHT | ButtonField.CONSUME_CLICK);
+		prevBtn = new ButtonField("Prev", Field.FIELD_LEFT | ButtonField.CONSUME_CLICK);
+		
+		nextBtn.setChangeListener(this);
+		
+		btnManager.add(prevBtn);
+		btnManager.add(nextBtn);
+		setStatus(btnManager);
 	}
-	
+
 	ObjectListField resultList = new ObjectListField(){
 		public void drawListRow(ListField list, Graphics g, int index, int y, int width){
 			if(index >= 0){
@@ -64,17 +67,65 @@ public class SearchResultScreen extends MainScreen implements FieldChangeListene
 				else{
 					bmp = Bitmap.getBitmapResource("icon.png");
 				}
-				
-				g.drawBitmap(0, y+5, bmp.getWidth(), bmp.getHeight(), bmp, 0, 0);
-				//g.drawText(result.getCoverart(), 0, y);
+
+				g.drawBitmap(4, y+5, bmp.getWidth(), bmp.getHeight(), bmp, 0, 0);
+				g.drawText(result.getTitle(), 100, y+5);
+				newY = y+(this.getFont()).getHeight()+1;
+				g.drawText(result.getLabel(), 100, newY);
+				newY = newY+(this.getFont()).getHeight()+1;
+				g.drawText(result.getFormat(), 100, newY);
 				g.drawLine(0, y+resultList.getRowHeight()-1, 
 						resultList.getWidth(), y+resultList.getRowHeight()-1);
 			}
 		}
 	};
 
-	public void fieldChanged(Field field, int context) {
-		// TODO Auto-generated method stub
+	public void fieldChanged(final Field field, int context) {
+		new Thread(){
+			public void run(){
+				if(field == nextBtn){
+					nextBtnClick();
+				}
+			}
+		}.start();
+	}
+	
+	private void nextBtnClick(){
+		//Custom dialog to display status message
+		final StatusDialog status = new StatusDialog("Loading a page...");
+		//Display status message to the user
+		UiApplication.getUiApplication().invokeLater(new Runnable(){
+			public void run(){
+				UiApplication.getUiApplication().pushScreen(status);
+			}
+		});
+
+		//TODO
+		final SearchResult a = this.data;
+		this.data = null;
+		this.data = a.getPageResult(a.getNextURL());
+		results = null;
 		
+		//Close dialog
+		UiApplication.getUiApplication().invokeLater(new Runnable(){
+    		public void run(){
+    			populateList(data);
+    			UiApplication.getUiApplication().popScreen(status);
+    			SearchResultScreen.this.invalidate();
+    		}
+    	});
+	}
+	
+	private void populateList(SearchResult data){
+		results = data.getResults();
+		int size = results.length;
+		
+		for(int i=0; i<size; i++){
+			result = results[i];
+			if(!result.getCoverart().equalsIgnoreCase("null")){
+				result.setImage(result.getCoverart());
+			}
+		}
+		resultList.set(results);
 	}
 }
