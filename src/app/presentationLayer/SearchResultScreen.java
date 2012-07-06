@@ -1,15 +1,17 @@
 /*
- * SearchResultScreen class
+ * SearchResultScreen class allows user to view the result of their search,
+ * navigate through them and select a particular version of the album.
  * 
  * TODO: Commenting and lots of work
  * 
  * Author: Mahendra M. Rai
- * Last modified: 12/06/2012
+ * Last modified: 02/07/2012
  */
 
 package app.presentationLayer;
 
 import app.applicationLayer.customUIComponents.StatusDialog;
+import app.applicationLayer.logic.TrackList;
 import app.applicationLayer.logic.Result;
 import app.applicationLayer.logic.SearchResult;
 import net.rim.device.api.system.Bitmap;
@@ -47,6 +49,8 @@ public class SearchResultScreen extends MainScreen implements FieldChangeListene
 		prevBtn = new ButtonField("Prev", Field.FIELD_LEFT | ButtonField.CONSUME_CLICK);
 		
 		nextBtn.setChangeListener(this);
+		prevBtn.setChangeListener(this);
+		//resultList.setChangeListener(this);
 		
 		btnManager.add(prevBtn);
 		btnManager.add(nextBtn);
@@ -78,6 +82,16 @@ public class SearchResultScreen extends MainScreen implements FieldChangeListene
 						resultList.getWidth(), y+resultList.getRowHeight()-1);
 			}
 		}
+		
+		public boolean navigationClick(int status, int time){
+			int index = resultList.getSelectedIndex();
+			result = results[index];
+			//String id = Long.toString(result.getDiscogsID());
+			TrackList album = new TrackList(result.getDiscogsID());
+			//album.getAlbumDetail();
+			UiApplication.getUiApplication().pushScreen(new AlbumDetailScreen(album));
+			return true;
+		}
 	};
 
 	public void fieldChanged(final Field field, int context) {
@@ -86,13 +100,19 @@ public class SearchResultScreen extends MainScreen implements FieldChangeListene
 				if(field == nextBtn){
 					nextBtnClick();
 				}
+				else if(field == prevBtn){
+					prevBtnClick();
+				}
 			}
 		}.start();
 	}
 	
+	/**
+	 * 
+	 */
 	private void nextBtnClick(){
 		//Custom dialog to display status message
-		final StatusDialog status = new StatusDialog("Loading a page...");
+		final StatusDialog status = new StatusDialog("Fetching...");
 		//Display status message to the user
 		UiApplication.getUiApplication().invokeLater(new Runnable(){
 			public void run(){
@@ -116,6 +136,39 @@ public class SearchResultScreen extends MainScreen implements FieldChangeListene
     	});
 	}
 	
+	/**
+	 * 
+	 */
+	private void prevBtnClick(){
+		//Custom dialog to display status message
+		final StatusDialog status = new StatusDialog("Fetching...");
+		//Display status message to the user
+		UiApplication.getUiApplication().invokeLater(new Runnable(){
+			public void run(){
+				UiApplication.getUiApplication().pushScreen(status);
+			}
+		});
+
+		//TODO
+		final SearchResult a = this.data;
+		this.data = null;
+		this.data = a.getPageResult(a.getPrevURL());
+		results = null;
+		
+		//Close dialog
+		UiApplication.getUiApplication().invokeLater(new Runnable(){
+    		public void run(){
+    			populateList(data);
+    			UiApplication.getUiApplication().popScreen(status);
+    			SearchResultScreen.this.invalidate();
+    		}
+    	});
+	}
+	
+	/**
+	 * 
+	 * @param data
+	 */
 	private void populateList(SearchResult data){
 		results = data.getResults();
 		int size = results.length;

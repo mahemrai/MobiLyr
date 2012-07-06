@@ -6,12 +6,15 @@
  * Note: Our parser object uses org.json.me library for parsing.
  * 
  * Author: Mahendra M. Rai
- * Last modified: 12/06/2012
+ * Last modified: 02/07/2012
  */
 
 package app.applicationLayer.core.internalLib;
 
+import java.util.Vector;
+
 import app.applicationLayer.core.externalLib.jsonParser.*;
+import app.applicationLayer.logic.TrackList;
 import app.applicationLayer.logic.SearchResult;
 import app.applicationLayer.logic.Result;
 
@@ -64,5 +67,29 @@ public class DataParser{
 			e.printStackTrace();
 		}
 		return searchResult;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public TrackList getAlbum(){
+		TrackList album = new TrackList();
+		Vector tracks = new Vector();
+		try{
+			JSONObject json = new JSONObject(this.dataSource);
+			JSONArray tracklist = json.getJSONArray("tracklist");
+			
+			for(int i=0; i<tracklist.length(); i++){
+				JSONObject me = tracklist.getJSONObject(i);
+				tracks.addElement(me.getString("title"));
+			}
+			
+			album.setList(tracks);
+		} catch(JSONException e){
+			e.printStackTrace();
+		}
+		
+		return album;
 	}
 }

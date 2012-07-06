@@ -51,10 +51,8 @@ public class SearchResult extends LogicObject{
 		
 		//Initialise ServerCall object with GET method
 		ServerCall requestCall = new ServerCall("GET", url, this);
-		//Start the thread
 		requestCall.start();
 		try{
-			//Wait for its process to end
 			requestCall.join();
 		}catch(InterruptedException e){
 			//TODO: Implement proper exception handler
@@ -78,10 +76,8 @@ public class SearchResult extends LogicObject{
 	public SearchResult getPageResult(String url){
 		//Initialise ServerCall object with GET method
 		ServerCall requestCall = new ServerCall("GET", url+";deviceSide=true", this);
-		//Start the thread
 		requestCall.start();
 		try{
-			//Wait for its process to end
 			requestCall.join();
 		}catch(InterruptedException e){
 			//TODO: Implement proper exception handler
@@ -104,7 +100,6 @@ public class SearchResult extends LogicObject{
 	 */
 	public String replaceWhiteSpaces(String text){
 		StringBuffer buffer = new StringBuffer();
-		//Loop through the provided String
 		for(int i=0; i<text.length(); i++){
 			char a = text.charAt(i);
 			//Check if the current character is a whitespace
