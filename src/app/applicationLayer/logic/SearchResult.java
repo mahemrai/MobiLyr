@@ -98,7 +98,7 @@ public class SearchResult extends LogicObject{
 	 * @param text User entered text.
 	 * @return
 	 */
-	public String replaceWhiteSpaces(String text){
+	private String replaceWhiteSpaces(String text){
 		StringBuffer buffer = new StringBuffer();
 		for(int i=0; i<text.length(); i++){
 			char a = text.charAt(i);

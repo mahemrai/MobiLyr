@@ -11,7 +11,16 @@
 
 package app.applicationLayer.core.internalLib;
 
+import java.io.InputStream;
 import java.util.Vector;
+
+import net.rim.device.api.xml.parsers.DocumentBuilder;
+import net.rim.device.api.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import app.applicationLayer.core.externalLib.jsonParser.*;
 import app.applicationLayer.logic.TrackList;
@@ -27,10 +36,6 @@ public class DataParser{
 		this.dataSource = dataSource;
 	}
 	
-	/**
-	 * Extracts SearchResult object from the provided JSON data
-	 * @return SearchResult object
-	 */
 	/**
 	 * Extracts SearchResult object from the provided JSON data
 	 * @return SearchResult object

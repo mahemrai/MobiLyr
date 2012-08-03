@@ -106,7 +106,7 @@ public class FindAlbumScreen extends MainScreen implements FieldChangeListener{
 				    			UiApplication.getUiApplication().popScreen(status);
 				    			//Push screen to the stack
 								UiApplication.getUiApplication().pushScreen(
-									new SearchResultScreen(searchResult.getSearchResult())
+									new SearchResultScreen(_artist.getText(), searchResult.getSearchResult())
 								);
 				    		}
 				    	});

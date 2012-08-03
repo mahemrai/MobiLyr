@@ -2,10 +2,8 @@
  * SearchResultScreen class allows user to view the result of their search,
  * navigate through them and select a particular version of the album.
  * 
- * TODO: Commenting and lots of work
- * 
  * Author: Mahendra M. Rai
- * Last modified: 02/07/2012
+ * Last modified: 03/08/2012
  */
 
 package app.presentationLayer;
@@ -34,15 +32,17 @@ public class SearchResultScreen extends MainScreen implements FieldChangeListene
 	private Result[] results;
 	private Result result;
 	private int newY;
+	private String artistName;
 
-	public SearchResultScreen(SearchResult data){
+	public SearchResultScreen(String artistName, SearchResult data){
 		setTitle("MobiLyr: Search Result");
 
+		this.artistName = artistName;
 		this.data = data;
 		populateList(this.data);
 
 		add(resultList);
-		resultList.setRowHeight(100);
+		resultList.setRowHeight(120);
 		
 		btnManager = new HorizontalFieldManager(Field.USE_ALL_WIDTH);
 		nextBtn = new ButtonField("Next", Field.FIELD_RIGHT | ButtonField.CONSUME_CLICK);
@@ -57,6 +57,7 @@ public class SearchResultScreen extends MainScreen implements FieldChangeListene
 		setStatus(btnManager);
 	}
 
+	//list of search result
 	ObjectListField resultList = new ObjectListField(){
 		public void drawListRow(ListField list, Graphics g, int index, int y, int width){
 			if(index >= 0){
@@ -83,13 +84,16 @@ public class SearchResultScreen extends MainScreen implements FieldChangeListene
 			}
 		}
 		
+		/**
+		 * get the tracklist of the selected album
+		 */
 		public boolean navigationClick(int status, int time){
 			int index = resultList.getSelectedIndex();
 			result = results[index];
 			//String id = Long.toString(result.getDiscogsID());
 			TrackList album = new TrackList(result.getDiscogsID());
 			//album.getAlbumDetail();
-			UiApplication.getUiApplication().pushScreen(new AlbumDetailScreen(album));
+			UiApplication.getUiApplication().pushScreen(new AlbumDetailScreen(artistName, album));
 			return true;
 		}
 	};
@@ -108,7 +112,7 @@ public class SearchResultScreen extends MainScreen implements FieldChangeListene
 	}
 	
 	/**
-	 * 
+	 * fetches next set of result
 	 */
 	private void nextBtnClick(){
 		//Custom dialog to display status message
@@ -137,7 +141,7 @@ public class SearchResultScreen extends MainScreen implements FieldChangeListene
 	}
 	
 	/**
-	 * 
+	 * fetches previous set of result
 	 */
 	private void prevBtnClick(){
 		//Custom dialog to display status message
@@ -149,7 +153,6 @@ public class SearchResultScreen extends MainScreen implements FieldChangeListene
 			}
 		});
 
-		//TODO
 		final SearchResult a = this.data;
 		this.data = null;
 		this.data = a.getPageResult(a.getPrevURL());
@@ -166,7 +169,7 @@ public class SearchResultScreen extends MainScreen implements FieldChangeListene
 	}
 	
 	/**
-	 * 
+	 * populate the listfield object after retrieving search results
 	 * @param data
 	 */
 	private void populateList(SearchResult data){
@@ -175,10 +178,13 @@ public class SearchResultScreen extends MainScreen implements FieldChangeListene
 		
 		for(int i=0; i<size; i++){
 			result = results[i];
+			//set default image if absent
 			if(!result.getCoverart().equalsIgnoreCase("null")){
 				result.setImage(result.getCoverart());
 			}
 		}
+		
+		//assign the result to our listfield object
 		resultList.set(results);
 	}
 }
